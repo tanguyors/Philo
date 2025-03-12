@@ -3,8 +3,8 @@
 void    announce_fork_acquisition(t_philo *philo)
 {
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d philo %d has taken a fork\n",
-        (int)(get_current_time_ms() - philo->data->start_time), philo->id);
+    printf("%lld %d has taken a fork\n",
+        get_current_time_ms() - philo->data->start_time, philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
@@ -38,8 +38,8 @@ void    handle_philosopher_meal(t_philo *philo)
     pthread_mutex_unlock(&philo->data->meal_mutex);
     
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d philo %d is eating ...\n",
-        (int)(get_current_time_ms() - philo->data->start_time), philo->id);
+    printf("%lld %d is eating\n",
+        get_current_time_ms() - philo->data->start_time, philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
     
     usleep(philo->data->time_to_eat * 1000);
@@ -50,8 +50,8 @@ void    sleep_philosopher(t_philo *philo)
 {    
     // Affichage du message indiquant que le philosophe dort
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d philo %d is sleeping\n", 
-        (int)(get_current_time_ms() - philo->data->start_time), philo->id);
+    printf("%lld %d is sleeping\n", 
+        get_current_time_ms() - philo->data->start_time, philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
     
     // Faire dormir le philosophe pendant time_to_sleep millisecondes
@@ -62,8 +62,8 @@ void    think_philosopher(t_philo *philo)
 {
     // Affichage du message indiquant que le philosophe pense
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d philo %d is thinking\n", 
-        (int)(get_current_time_ms() - philo->data->start_time), philo->id);
+    printf("%lld %d is thinking\n", 
+        get_current_time_ms() - philo->data->start_time, philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
     
     // Ici, pas de sleep car le temps de réflexion est indéterminé

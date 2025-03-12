@@ -77,7 +77,13 @@ int    checkdeath(t_philo *philo)
     
     time_no_eat = actual_time - last_meal_time;
     if(time_no_eat > philo->data->time_to_die)
+    {
+        pthread_mutex_lock(&philo->data->write_mutex);
+        printf("%lld %d died\n", 
+            get_current_time_ms() - philo->data->start_time, philo->id);
+        pthread_mutex_unlock(&philo->data->write_mutex);
         return(1);
+    }
     return(0);
 }
 
