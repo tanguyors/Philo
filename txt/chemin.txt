@@ -1,0 +1,100 @@
+CHEMIN D'EXÉCUTION DU PROGRAMME PHILOSOPHERS
+
+1. DÉMARRAGE (main.c)
+---------------------
+main(argc, argv)
+    ↓
+    1. validate_arguments_count(argc)
+        - Vérifie si on a 4 ou 5 arguments (5 ou 6 avec le programme)
+        - Si incorrect : affiche message d'erreur et quitte
+    ↓
+    2. initialize_simulation_data(&data, argc, argv)
+        a) Parse les arguments :
+           - nombre de philosophes
+           - temps pour mourir
+           - temps pour manger
+           - temps pour dormir
+           - (optionnel) nombre de repas minimum
+        
+        b) Initialise les mutex :
+           - mutex des fourchettes (un par philosophe)
+           - mutex d'écriture
+           - mutex des repas
+           - mutex de fin
+        
+        c) Initialise les philosophes :
+           - Alloue la mémoire
+           - Configure chaque philosophe (ID, fourchettes, etc.)
+    ↓
+    3. start_simulation(&data)
+        → Lance la simulation
+
+2. DÉMARRAGE DE LA SIMULATION (simulation_monitor.c)
+--------------------------------------------------
+start_simulation()
+    ↓
+    1. Crée les threads des philosophes
+        - Un thread par philosophe
+        - Chaque thread exécute execute_philosopher_routine
+    ↓
+    2. Lance monitor_philosophers
+        - Surveille la mort des philosophes
+        - Met fin à la simulation si nécessaire
+
+3. ROUTINE DES PHILOSOPHES (philosopher_routine.c)
+------------------------------------------------
+execute_philosopher_routine()
+    ↓
+    1. Annonce le démarrage
+    ↓
+    2. Boucle principale :
+        a) attempt_to_acquire_forks()
+           - Vérifie si la simulation est finie
+           - Prend les fourchettes selon l'ID (pair/impair)
+        ↓
+        b) handle_philosopher_meal()
+           - Met à jour le temps du dernier repas
+           - Mange pendant time_to_eat
+           - Libère les fourchettes
+        ↓
+        c) Répète jusqu'à la fin de la simulation
+
+4. SURVEILLANCE (simulation_monitor.c)
+------------------------------------
+monitor_philosophers()
+    ↓
+    1. Vérifie chaque philosophe en boucle
+    ↓
+    2. Pour chaque philosophe :
+        - Vérifie le temps depuis son dernier repas
+        - Si > time_to_die : annonce la mort et termine
+    ↓
+    3. Continue jusqu'à ce qu'un philosophe meure ou
+       que tous aient mangé assez de fois
+
+5. TERMINAISON
+-------------
+cleanup_simulation_resources()
+    ↓
+    1. Attend la fin de tous les threads
+    ↓
+    2. Détruit tous les mutex
+    ↓
+    3. Libère la mémoire allouée
+
+POINTS CRITIQUES :
+-----------------
+1. Gestion des mutex :
+   - Toujours verrouiller dans le même ordre
+   - Déverrouiller rapidement
+   - Éviter les deadlocks
+
+2. Synchronisation :
+   - Philosophes pairs/impairs décalés
+   - Vérification constante de l'état de la simulation
+   - Protection des variables partagées
+
+3. Conditions de fin :
+   - Mort d'un philosophe
+   - Nombre de repas atteint
+   - Nettoyage propre des ressources

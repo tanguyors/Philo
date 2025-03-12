@@ -1,0 +1,115 @@
+PHILOSOPHERS - Documentation des fonctions
+
+1. FONCTIONS DE TEMPS ET D'INITIALISATION (init.c)
+-------------------------------------------------
+get_current_time_ms()
+    - Obtient le temps actuel en millisecondes
+    - Utilise gettimeofday pour la précision
+    - Retourne le temps en millisecondes depuis l'époque
+
+initialize_simulation_mutexes()
+    - Initialise les trois mutex principaux :
+        * write_mutex (pour l'affichage)
+        * meal_mutex (pour la gestion des repas)
+        * finished_mutex (pour l'état de la simulation)
+    - Retourne 0 si succès, 1 si échec
+
+initialize_fork_mutexes()
+    - Alloue et initialise les mutex pour les fourchettes
+    - Crée autant de mutex que de philosophes
+    - Retourne 0 si succès, 1 si échec
+
+setup_philosopher_parameters()
+    - Configure les paramètres initiaux d'un philosophe :
+        * ID, nombre de repas, dernier repas
+        * Références aux fourchettes gauche et droite
+        * État initial (peut manger ou non)
+
+allocate_and_initialize_philosophers()
+    - Alloue la mémoire pour tous les philosophes
+    - Initialise chaque philosophe avec setup_philosopher_parameters
+    - Retourne 0 si succès, 1 si échec
+
+initialize_simulation_data()
+    - Point d'entrée de l'initialisation
+    - Parse et valide les arguments
+    - Initialise toutes les structures de données
+    - Retourne 0 si succès, 1 si échec
+
+2. FONCTIONS DES ACTIONS DES PHILOSOPHES (philosopher_action.c)
+-------------------------------------------------------------
+announce_fork_acquisition()
+    - Affiche le message de prise de fourchette
+    - Protège l'affichage avec write_mutex
+
+acquire_forks_even_philosopher()
+    - Gère la prise des fourchettes pour les philosophes pairs
+    - Prend d'abord la fourchette droite, puis la gauche
+    - Annonce chaque prise de fourchette
+
+acquire_forks_odd_philosopher()
+    - Gère la prise des fourchettes pour les philosophes impairs
+    - Prend d'abord la fourchette gauche, puis la droite
+    - Annonce chaque prise de fourchette
+
+release_philosopher_forks()
+    - Libère les deux fourchettes
+    - Marque le philosophe comme ne pouvant plus manger
+
+handle_philosopher_meal()
+    - Gère le processus complet du repas :
+        * Met à jour le temps du dernier repas
+        * Affiche le message de repas
+        * Attend le temps nécessaire
+        * Libère les fourchettes
+
+3. FONCTIONS DE ROUTINE DES PHILOSOPHES (philosopher_routine.c)
+-------------------------------------------------------------
+is_simulation_finished()
+    - Vérifie si la simulation est terminée
+    - Protège l'accès à la variable finished
+
+announce_philosopher_start()
+    - Annonce le démarrage d'un philosophe
+    - Affiche le message avec le temps relatif
+
+attempt_to_acquire_forks()
+    - Tente de prendre les fourchettes
+    - Gère les cas pairs et impairs
+    - Vérifie l'état de la simulation
+
+execute_philosopher_routine()
+    - Fonction principale de chaque thread philosophe
+    - Gère le cycle complet : prise fourchettes, manger, attendre
+    - Continue jusqu'à la fin de la simulation
+
+checkdeath()
+    - Vérifie si un philosophe est mort
+    - Compare le temps depuis le dernier repas avec time_to_die
+
+4. FONCTIONS PRINCIPALES (main.c)
+--------------------------------
+validate_arguments_count()
+    - Vérifie le nombre d'arguments
+    - Affiche l'usage si incorrect
+
+validate_simulation_parameters()
+    - Valide les valeurs des paramètres
+    - Vérifie que les nombres sont positifs et cohérents
+
+main()
+    - Point d'entrée du programme
+    - Gère l'initialisation, l'exécution et le nettoyage
+    - Retourne 0 si succès, 1 si erreur
+
+5. FONCTIONS DE SURVEILLANCE (simulation_monitor.c)
+-------------------------------------------------
+monitor_philosophers()
+    - Surveille l'état de tous les philosophes
+    - Détecte la mort d'un philosophe
+    - Met fin à la simulation si nécessaire
+
+cleanup_simulation_resources()
+    - Libère toutes les ressources allouées
+    - Détruit les mutex
+    - Libère la mémoire
