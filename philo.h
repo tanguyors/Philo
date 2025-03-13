@@ -80,4 +80,6 @@ void				sleep_philosopher(t_philo *philo);
 /* Nouvelle fonction pour le philosophe pense */
 void				think_philosopher(t_philo *philo);
 
+int checkdeath(t_philo *philo);
+
 #endif

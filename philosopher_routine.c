@@ -24,13 +24,13 @@ static int	is_simulation_finished(t_philo *philo)
 	return (0);
 }
 
-static void	announce_philosopher_start(t_philo *philo)
+/*static void	announce_philosopher_start(t_philo *philo)
 {
 	pthread_mutex_lock(&philo->data->write_mutex);
 	printf("%d  philo %d has started\n", (int)(get_current_time_ms()
 			- philo->data->start_time), philo->id);
 	pthread_mutex_unlock(&philo->data->write_mutex);
-}
+}*/
 
 void	attempt_to_acquire_forks(t_philo *philo)
 {
@@ -55,23 +55,25 @@ void	*execute_philosopher_routine(void *arg)
 	philo = (t_philo *)arg;
 	if (is_simulation_finished(philo))
 		return (NULL);
-	announce_philosopher_start(philo);
+	//announce_philosopher_start(philo);
 	if (philo->id % 2 == 0)
-		usleep(100);
+		usleep(50);
 	while (!is_simulation_finished(philo))
 	{
 		attempt_to_acquire_forks(philo);
 		if (philo->can_eat)
 		{
 			handle_philosopher_meal(philo);
+			checkdeath(philo);
 			// Après avoir mangé, le philosophe dort si la simulation continue
 			if (!is_simulation_finished(philo))
 			{
 				sleep_philosopher(philo);
+				checkdeath(philo);
 				think_philosopher(philo);
 			}
 		}
-		usleep(100);
+		usleep(50);
 	}
 	return (NULL);
 }
@@ -87,11 +89,16 @@ int	checkdeath(t_philo *philo)
 	last_meal_time = philo->last_meal;
 	pthread_mutex_unlock(&philo->data->meal_mutex);
 	time_no_eat = actual_time - last_meal_time;
+
+	// Ajout d'un log pour le temps écoulé
+	//printf("Philosopher %d: Time since last meal: %lld ms\n", philo->id, time_no_eat);
+	usleep(100);
 	if (time_no_eat > philo->data->time_to_die)
 	{
 		pthread_mutex_lock(&philo->data->write_mutex);
 		printf("%lld %d died\n", get_current_time_ms()
 			- philo->data->start_time, philo->id);
+		philo->data->finished = 1;
 		pthread_mutex_unlock(&philo->data->write_mutex);
 		return (1);
 	}
