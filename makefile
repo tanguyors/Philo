@@ -9,8 +9,12 @@ CFLAGS = -Wall -Wextra -Werror -pthread
 SRCS = main.c \
        init.c \
        philosopher_action.c \
+	   philosopher_routine2.c \
+	   philosopher_action2.c \
        philosopher_routine.c \
-       simulation_monitor.c
+       simulation_monitor.c \
+	   gettime.c
+
 
 # Objets
 OBJS = $(SRCS:.c=.o)

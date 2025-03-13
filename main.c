@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: your_login <your_login@student.42.fr>      +#+  +:+       +#+        */
+/*   By: torsini <torsini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/01 00:00:00 by your_login        #+#    #+#             */
-/*   Updated: 2024/01/01 00:00:00 by your_login       ###   ########.fr       */
+/*   Updated: 2025/03/13 10:07:20 by torsini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,3 @@ int	main(int argc, char **argv)
 	cleanup_simulation_resources(&data);
 	return (0);
 }
-
