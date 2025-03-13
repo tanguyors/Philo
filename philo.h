@@ -6,7 +6,6 @@
 # include <stdlib.h>
 # include <unistd.h>
 # include <sys/time.h>
-# include "libft/libft.h"
 
 /* Structures */
 typedef struct s_philo

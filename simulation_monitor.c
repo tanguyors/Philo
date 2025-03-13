@@ -64,8 +64,8 @@ void    monitor_philosophers(t_data *data)
             if (check_philosopher_death(&data->philos[i]))
             {
                 pthread_mutex_lock(&data->write_mutex);
-                ft_printf("%d philo %d died\n",
-                    (int)(get_current_time_ms() - data->start_time),
+                printf("%lld %d died\n", 
+                    get_current_time_ms() - data->start_time, 
                     data->philos[i].id);
                 pthread_mutex_lock(&data->finished_mutex);
                 data->finished = 1;

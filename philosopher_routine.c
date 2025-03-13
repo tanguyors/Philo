@@ -15,7 +15,7 @@ static int    is_simulation_finished(t_philo *philo)
 static void    announce_philosopher_start(t_philo *philo)
 {
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d  philo %d has started\n",
+    printf("%d  philo %d has started\n",
         (int)(get_current_time_ms() - philo->data->start_time), philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
 }
@@ -90,7 +90,8 @@ int    checkdeath(t_philo *philo)
 void    print_fork_message(t_philo *philo)
 {
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d philo %d has taken a fork\n", (int)(get_current_time_ms() - philo->data->start_time), philo->id);
+    printf("%lld %d has taken a fork\n", 
+        get_current_time_ms() - philo->data->start_time, philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
@@ -159,8 +160,8 @@ void eat(t_philo *philo)
 
     // 3. Affichage du message
     pthread_mutex_lock(&philo->data->write_mutex);
-    ft_printf("%d philo %d is eating ...\n", 
-        (int)(get_current_time_ms() - philo->data->start_time), philo->id);
+    printf("%lld %d is eating\n", 
+        get_current_time_ms() - philo->data->start_time, philo->id);
     pthread_mutex_unlock(&philo->data->write_mutex);
     
     // 4. Attente et libération des fourchettes

@@ -57,13 +57,13 @@ static int    allocate_and_initialize_philosophers(t_data *data)
 
 int    initialize_simulation_data(t_data *data, int argc, char **argv)
 {
-    data->num_philos = ft_atoi(argv[1]);
-    data->time_to_die = ft_atoi(argv[2]);
-    data->time_to_eat = ft_atoi(argv[3]);
-    data->time_to_sleep = ft_atoi(argv[4]);
+    data->num_philos = atoi(argv[1]);
+    data->time_to_die = atoi(argv[2]);
+    data->time_to_eat = atoi(argv[3]);
+    data->time_to_sleep = atoi(argv[4]);
     data->num_must_eat = -1;
     if (argc == 6)
-        data->num_must_eat = ft_atoi(argv[5]);
+        data->num_must_eat = atoi(argv[5]);
     if (validate_simulation_parameters(data) != 0)
         return (1);
     data->start_time = get_current_time_ms();

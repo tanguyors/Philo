@@ -5,10 +5,6 @@ NAME = philo
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -pthread
 
-# Chemins
-LIBFT_PATH = libft
-LIBFT = $(LIBFT_PATH)/libft.a
-
 # Sources
 SRCS = main.c \
        init.c \
@@ -21,29 +17,23 @@ OBJS = $(SRCS:.c=.o)
 
 # Headers
 HEADERS = philo.h
-INCLUDES = -I. -I$(LIBFT_PATH)
+INCLUDES = -I.
 
 # Règles
-all: $(LIBFT) $(NAME)
-
-# Compilation de la libft
-$(LIBFT):
-	make -C $(LIBFT_PATH)
+all: $(NAME)
 
 # Compilation du programme principal
 $(NAME): $(OBJS)
-	$(CC) $(CFLAGS) $(OBJS) -L$(LIBFT_PATH) -lft -o $(NAME)
+	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 
 # Compilation des objets
 %.o: %.c $(HEADERS)
 	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 clean:
-	make -C $(LIBFT_PATH) clean
 	rm -f $(OBJS)
 
 fclean: clean
-	make -C $(LIBFT_PATH) fclean
 	rm -f $(NAME)
 
 re: fclean all

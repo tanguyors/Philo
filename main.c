@@ -16,9 +16,9 @@ int	validate_arguments_count(int argc)
 {
 	if (argc < 5 || argc > 6)
 	{
-		ft_printf("Error: Wrong number of arguments\n");
-		ft_printf("Usage: ./philo number_of_philosophers time_to_die ");
-		ft_printf("time_to_eat time_to_sleep [number_of_times_each_must_eat]\n");
+		printf("Error: Wrong number of arguments\n");
+		printf("Usage: ./philo number_of_philosophers time_to_die ");
+		printf("time_to_eat time_to_sleep [number_of_times_each_must_eat]\n");
 		return (1);
 	}
 	return (0);
@@ -30,7 +30,7 @@ int	validate_simulation_parameters(t_data *data)
 		|| data->time_to_eat <= 0 || data->time_to_sleep <= 0
 		|| (data->num_must_eat <= 0 && data->num_must_eat != -1))
 	{
-		ft_printf("Error: Invalid arguments values\n");
+		printf("Error: Invalid arguments values\n");
 		return (1);
 	}
 	return (0);
