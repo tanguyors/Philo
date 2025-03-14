@@ -68,6 +68,7 @@ int	initialize_simulation_data(t_data *data, int argc, char **argv)
 	data->num_must_eat = -1;
 	if (argc == 6)
 		data->num_must_eat = atoi(argv[5]);
+	data->all_ate_enough = 0;
 	if (validate_simulation_parameters(data) != 0)
 		return (1);
 	data->start_time = get_current_time_ms();

@@ -63,35 +63,36 @@ int	start_simulation(t_data *data)
 
 void	monitor_philosophers(t_data *data)
 {
-	int	i;
+	int i;
+	int should_continue;
 
-	pthread_mutex_lock(&data->finished_mutex);
-	while (!data->finished)
+	should_continue = 1;
+	while (should_continue)
 	{
 		i = 0;
 		while (i < data->num_philos)
 		{
-			pthread_mutex_unlock(&data->finished_mutex);
 			if (check_philosopher_death(&data->philos[i]))
 			{
 				pthread_mutex_lock(&data->write_mutex);
-				printf("%lld %d died\n", get_current_time_ms()
-					- data->start_time, data->philos[i].id);
+				printf("%lld %d died\n", get_current_time_ms() - data->start_time, 
+					data->philos[i].id);
 				pthread_mutex_lock(&data->finished_mutex);
 				data->finished = 1;
 				pthread_mutex_unlock(&data->finished_mutex);
 				pthread_mutex_unlock(&data->write_mutex);
-				
-				exit(0);
-				
-				return;
+				return;  // Sortir immédiatement après avoir détecté une mort
 			}
-			pthread_mutex_lock(&data->finished_mutex);
 			i++;
 		}
-		pthread_mutex_unlock(&data->finished_mutex);
-		usleep(1000);
+		
+		// Vérifier si la simulation est terminée
 		pthread_mutex_lock(&data->finished_mutex);
+		should_continue = !data->finished;
+		if (data->all_ate_enough)
+			should_continue = 0;
+		pthread_mutex_unlock(&data->finished_mutex);
+		
+		usleep(1000);
 	}
-	pthread_mutex_unlock(&data->finished_mutex);
 }

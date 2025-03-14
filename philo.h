@@ -39,6 +39,7 @@ typedef struct s_data
 	int				time_to_sleep;
 	int				num_must_eat;
 	int				finished;
+	int				all_ate_enough;
 	long long		start_time;
 	pthread_mutex_t	*forks;
 	pthread_mutex_t	write_mutex;
@@ -61,6 +62,7 @@ void				release_philosopher_forks(t_philo *philo);
 void				handle_philosopher_meal(t_philo *philo);
 
 /* Fonctions de routine des philosophes */
+int					is_simulation_finished(t_philo *philo);
 void				*execute_philosopher_routine(void *arg);
 void				attempt_to_acquire_forks(t_philo *philo);
 
