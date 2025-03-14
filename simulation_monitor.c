@@ -63,6 +63,18 @@ int	start_simulation(t_data *data)
 	while (++i < data->num_philos)
 		pthread_join(threads[i], NULL);
 	free(threads);
+	
+	// Si un seul philosophe, vérifier explicitement si la simulation est terminée
+	if (data->num_philos == 1)
+	{
+		pthread_mutex_lock(&data->finished_mutex);
+		int is_finished = data->finished;
+		pthread_mutex_unlock(&data->finished_mutex);
+		
+		if (is_finished)
+			return (0);
+	}
+	
 	return (0);
 }
 
@@ -91,7 +103,14 @@ void	monitor_philosophers(t_data *data)
 			if (check_philosopher_death(&data->philos[i]))
 			{
 				announce_death(data, i);
-				return ;
+				// Forcer la fin de la simulation pour tous les threads
+				pthread_mutex_lock(&data->finished_mutex);
+				data->finished = 1;
+				pthread_mutex_unlock(&data->finished_mutex);
+				
+				// Si un seul philosophe, forcer la fin du programme
+				if (data->num_philos == 1)
+					return;
 			}
 			i++;
 		}

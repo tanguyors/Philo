@@ -41,6 +41,19 @@ void	*execute_philosopher_routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
+	
+	// Cas spécial pour un seul philosophe
+	if (philo->data->num_philos == 1)
+	{
+		pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
+		announce_fork_acquisition(philo);
+		pthread_mutex_unlock(&philo->data->forks[philo->left_fork]);
+		// Attendre la mort sans bloquer
+		while (!is_simulation_finished(philo))
+			usleep(1000);
+		return (NULL);
+	}
+	
 	if (philo->id % 2 == 0)
 		usleep(50);
 	while (!is_simulation_finished(philo))
