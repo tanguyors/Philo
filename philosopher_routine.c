@@ -14,14 +14,12 @@
 
 int	is_simulation_finished(t_philo *philo)
 {
+	int	finished;
+
 	pthread_mutex_lock(&philo->data->finished_mutex);
-	if (philo->data->finished)
-	{
-		pthread_mutex_unlock(&philo->data->finished_mutex);
-		return (1);
-	}
+	finished = philo->data->finished;
 	pthread_mutex_unlock(&philo->data->finished_mutex);
-	return (0);
+	return (finished);
 }
 
 /*static void	announce_philosopher_start(t_philo *philo)
@@ -32,6 +30,19 @@ int	is_simulation_finished(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }*/
 
+static void	perform_philosopher_actions(t_philo *philo)
+{
+	if (philo->can_eat && !is_simulation_finished(philo))
+	{
+		handle_philosopher_meal(philo);
+		if (!is_simulation_finished(philo))
+		{
+			sleep_philosopher(philo);
+			if (!is_simulation_finished(philo))
+				think_philosopher(philo);
+		}
+	}
+}
 
 void	*execute_philosopher_routine(void *arg)
 {
@@ -40,26 +51,14 @@ void	*execute_philosopher_routine(void *arg)
 	philo = (t_philo *)arg;
 	if (philo->id % 2 == 0)
 		usleep(50);
-
 	while (!is_simulation_finished(philo))
 	{
 		if (is_simulation_finished(philo))
-			break;
-			
+			break ;
 		attempt_to_acquire_forks(philo);
-		if (philo->can_eat && !is_simulation_finished(philo))
-		{
-			handle_philosopher_meal(philo);
-			if (!is_simulation_finished(philo))
-			{
-				sleep_philosopher(philo);
-				if (!is_simulation_finished(philo))
-					think_philosopher(philo);
-			}
-		}
+		perform_philosopher_actions(philo);
 		usleep(50);
 	}
-
 	if (philo->can_eat)
 		release_philosopher_forks(philo);
 	return (NULL);

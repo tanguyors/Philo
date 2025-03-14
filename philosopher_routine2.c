@@ -20,17 +20,8 @@ void	print_fork_message(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->write_mutex);
 }
 
-void	takeforks(t_philo *philo)
+static void	acquire_forks_by_parity(t_philo *philo)
 {
-	// 1. Vérification rapide de finished
-	pthread_mutex_lock(&philo->data->finished_mutex);
-	if (philo->data->finished)
-	{
-		pthread_mutex_unlock(&philo->data->finished_mutex);
-		return ;
-	}
-	pthread_mutex_unlock(&philo->data->finished_mutex);
-	// 2. Prise des fourchettes dans un ordre cohérent
 	if (philo->id % 2 == 0)
 	{
 		pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
@@ -45,7 +36,18 @@ void	takeforks(t_philo *philo)
 		pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
 		print_fork_message(philo);
 	}
-	// 3. Vérification finale de finished
+}
+
+void	takeforks(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->finished_mutex);
+	if (philo->data->finished)
+	{
+		pthread_mutex_unlock(&philo->data->finished_mutex);
+		return ;
+	}
+	pthread_mutex_unlock(&philo->data->finished_mutex);
+	acquire_forks_by_parity(philo);
 	pthread_mutex_lock(&philo->data->finished_mutex);
 	if (philo->data->finished)
 	{

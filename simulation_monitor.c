@@ -61,10 +61,21 @@ int	start_simulation(t_data *data)
 	return (0);
 }
 
+static void	announce_death(t_data *data, int i)
+{
+	pthread_mutex_lock(&data->write_mutex);
+	printf("%lld %d died\n", get_current_time_ms() - data->start_time,
+		data->philos[i].id);
+	pthread_mutex_lock(&data->finished_mutex);
+	data->finished = 1;
+	pthread_mutex_unlock(&data->finished_mutex);
+	pthread_mutex_unlock(&data->write_mutex);
+}
+
 void	monitor_philosophers(t_data *data)
 {
-	int i;
-	int should_continue;
+	int	i;
+	int	should_continue;
 
 	should_continue = 1;
 	while (should_continue)
@@ -74,25 +85,16 @@ void	monitor_philosophers(t_data *data)
 		{
 			if (check_philosopher_death(&data->philos[i]))
 			{
-				pthread_mutex_lock(&data->write_mutex);
-				printf("%lld %d died\n", get_current_time_ms() - data->start_time, 
-					data->philos[i].id);
-				pthread_mutex_lock(&data->finished_mutex);
-				data->finished = 1;
-				pthread_mutex_unlock(&data->finished_mutex);
-				pthread_mutex_unlock(&data->write_mutex);
-				return;  // Sortir immédiatement après avoir détecté une mort
+				announce_death(data, i);
+				return ;
 			}
 			i++;
 		}
-		
-		// Vérifier si la simulation est terminée
 		pthread_mutex_lock(&data->finished_mutex);
 		should_continue = !data->finished;
 		if (data->all_ate_enough)
 			should_continue = 0;
 		pthread_mutex_unlock(&data->finished_mutex);
-		
 		usleep(1000);
 	}
 }
