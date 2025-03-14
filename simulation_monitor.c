@@ -89,34 +89,42 @@ static void	announce_death(t_data *data, int i)
 	pthread_mutex_unlock(&data->write_mutex);
 }
 
-void	monitor_philosophers(t_data *data)
+static int	check_philosophers_status(t_data *data)
 {
 	int	i;
+
+	// Vérifier si un philosophe est mort
+	i = 0;
+	while (i < data->num_philos)
+	{
+		if (check_philosopher_death(&data->philos[i]))
+		{
+			announce_death(data, i);
+			return (1);
+		}
+		i++;
+	}
+
+	// Vérifier si tous les philosophes ont mangé suffisamment
+	if (check_all_philosophers_ate_enough(data))
+	{
+		// Afficher un message optionnel
+		pthread_mutex_lock(&data->write_mutex);
+		pthread_mutex_unlock(&data->write_mutex);
+		return (1);
+	}
+	return (0);
+}
+
+void	monitor_philosophers(t_data *data)
+{
 	int	should_continue;
 
 	should_continue = 1;
 	while (should_continue)
 	{
-		// Vérifier si un philosophe est mort
-		i = 0;
-		while (i < data->num_philos)
-		{
-			if (check_philosopher_death(&data->philos[i]))
-			{
-				announce_death(data, i);
-				return;
-			}
-			i++;
-		}
-
-		// Vérifier si tous les philosophes ont mangé suffisamment
-		if (check_all_philosophers_ate_enough(data))
-		{
-			// Afficher un message optionnel
-			pthread_mutex_lock(&data->write_mutex);
-			pthread_mutex_unlock(&data->write_mutex);
+		if (check_philosophers_status(data))
 			return;
-		}
 
 		pthread_mutex_lock(&data->finished_mutex);
 		should_continue = !data->finished;

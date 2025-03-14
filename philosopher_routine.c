@@ -36,6 +36,16 @@ static void	perform_philosopher_actions(t_philo *philo)
 	}
 }
 
+static void	handle_single_philosopher(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
+	announce_fork_acquisition(philo);
+	pthread_mutex_unlock(&philo->data->forks[philo->left_fork]);
+	// Attendre la mort sans bloquer
+	while (!is_simulation_finished(philo))
+		usleep(1000);
+}
+
 void	*execute_philosopher_routine(void *arg)
 {
 	t_philo	*philo;
@@ -45,12 +55,7 @@ void	*execute_philosopher_routine(void *arg)
 	// Cas spécial pour un seul philosophe
 	if (philo->data->num_philos == 1)
 	{
-		pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
-		announce_fork_acquisition(philo);
-		pthread_mutex_unlock(&philo->data->forks[philo->left_fork]);
-		// Attendre la mort sans bloquer
-		while (!is_simulation_finished(philo))
-			usleep(1000);
+		handle_single_philosopher(philo);
 		return (NULL);
 	}
 	
@@ -59,7 +64,7 @@ void	*execute_philosopher_routine(void *arg)
 	while (!is_simulation_finished(philo))
 	{
 		if (is_simulation_finished(philo))
-			break ;
+			break;
 		attempt_to_acquire_forks(philo);
 		perform_philosopher_actions(philo);
 		usleep(50);

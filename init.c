@@ -59,7 +59,7 @@ static int	allocate_and_initialize_philosophers(t_data *data)
 	return (0);
 }
 
-int	initialize_simulation_data(t_data *data, int argc, char **argv)
+static int	parse_simulation_arguments(t_data *data, int argc, char **argv)
 {
 	data->num_philos = atoi(argv[1]);
 	data->time_to_die = atoi(argv[2]);
@@ -73,23 +73,16 @@ int	initialize_simulation_data(t_data *data, int argc, char **argv)
 		return (1);
 	data->start_time = get_current_time_ms();
 	data->finished = 0;
+	return (0);
+}
+
+int	initialize_simulation_data(t_data *data, int argc, char **argv)
+{
+	if (parse_simulation_arguments(data, argc, argv) != 0)
+		return (1);
 	if (initialize_fork_mutexes(data) != 0
 		|| initialize_simulation_mutexes(data) != 0
 		|| allocate_and_initialize_philosophers(data) != 0)
 		return (1);
-
-	// Initialiser les philosophes
-	int	i = -1;
-	while (++i < data->num_philos)
-	{
-		data->philos[i].id = i + 1;
-		data->philos[i].meals_eaten = 0;
-		data->philos[i].data = data;
-		data->philos[i].left_fork = i;
-		data->philos[i].right_fork = (i + 1) % data->num_philos;
-		// Initialiser le temps du dernier repas au temps de démarrage
-		data->philos[i].last_meal = get_current_time_ms();
-	}
-
 	return (0);
 }

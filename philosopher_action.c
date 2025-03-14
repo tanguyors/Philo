@@ -38,15 +38,12 @@ void	release_philosopher_forks(t_philo *philo)
 	philo->can_eat = 0;
 }
 
-int	check_all_philosophers_ate_enough(t_data *data)
+static int	verify_meal_count(t_data *data)
 {
 	int	i;
-	int	all_ate_enough = 1;
+	int	all_ate_enough;
 
-	if (data->num_must_eat == -1)
-		return (0);
-
-	pthread_mutex_lock(&data->meal_mutex);
+	all_ate_enough = 1;
 	i = 0;
 	while (i < data->num_philos)
 	{
@@ -57,6 +54,18 @@ int	check_all_philosophers_ate_enough(t_data *data)
 		}
 		i++;
 	}
+	return (all_ate_enough);
+}
+
+int	check_all_philosophers_ate_enough(t_data *data)
+{
+	int	all_ate_enough;
+
+	if (data->num_must_eat == -1)
+		return (0);
+
+	pthread_mutex_lock(&data->meal_mutex);
+	all_ate_enough = verify_meal_count(data);
 	pthread_mutex_unlock(&data->meal_mutex);
 
 	if (all_ate_enough)
