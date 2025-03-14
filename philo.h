@@ -82,6 +82,6 @@ int						start_simulation(t_data *data);
 void					monitor_philosophers(t_data *data);
 int						check_philosopher_death(t_philo *philo);
 
-int						check_all_philosophers_ate_enough(t_philo *philo);
+int						check_all_philosophers_ate_enough(t_data *data);
 
 #endif

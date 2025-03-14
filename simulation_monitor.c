@@ -92,32 +92,34 @@ static void	announce_death(t_data *data, int i)
 void	monitor_philosophers(t_data *data)
 {
 	int	i;
-	int	should_continue ;
+	int	should_continue;
 
 	should_continue = 1;
 	while (should_continue)
 	{
+		// Vérifier si un philosophe est mort
 		i = 0;
 		while (i < data->num_philos)
 		{
 			if (check_philosopher_death(&data->philos[i]))
 			{
 				announce_death(data, i);
-				// Forcer la fin de la simulation pour tous les threads
-				pthread_mutex_lock(&data->finished_mutex);
-				data->finished = 1;
-				pthread_mutex_unlock(&data->finished_mutex);
-				
-				// Si un seul philosophe, forcer la fin du programme
-				if (data->num_philos == 1)
-					return;
+				return;
 			}
 			i++;
 		}
+
+		// Vérifier si tous les philosophes ont mangé suffisamment
+		if (check_all_philosophers_ate_enough(data))
+		{
+			// Afficher un message optionnel
+			pthread_mutex_lock(&data->write_mutex);
+			pthread_mutex_unlock(&data->write_mutex);
+			return;
+		}
+
 		pthread_mutex_lock(&data->finished_mutex);
 		should_continue = !data->finished;
-		if (data->all_ate_enough)
-			should_continue = 0;
 		pthread_mutex_unlock(&data->finished_mutex);
 		usleep(1000);
 	}
