@@ -64,12 +64,23 @@ void	*execute_philosopher_routine(void *arg)
 		if (philo->can_eat)
 		{
 			handle_philosopher_meal(philo);
-			checkdeath(philo);
-			// Après avoir mangé, le philosophe dort si la simulation continue
+			if (checkdeath(philo))
+			{
+				pthread_mutex_lock(&philo->data->finished_mutex);
+				philo->data->finished = 1;
+				pthread_mutex_unlock(&philo->data->finished_mutex);
+				return (NULL);
+			}
 			if (!is_simulation_finished(philo))
 			{
 				sleep_philosopher(philo);
-				checkdeath(philo);
+				if (checkdeath(philo))
+				{
+					pthread_mutex_lock(&philo->data->finished_mutex);
+					philo->data->finished = 1;
+					pthread_mutex_unlock(&philo->data->finished_mutex);
+					return (NULL);
+				}
 				think_philosopher(philo);
 			}
 		}
@@ -90,15 +101,15 @@ int	checkdeath(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->meal_mutex);
 	time_no_eat = actual_time - last_meal_time;
 
-	// Ajout d'un log pour le temps écoulé
-	//printf("Philosopher %d: Time since last meal: %lld ms\n", philo->id, time_no_eat);
 	usleep(100);
 	if (time_no_eat > philo->data->time_to_die)
 	{
 		pthread_mutex_lock(&philo->data->write_mutex);
 		printf("%lld %d died\n", get_current_time_ms()
 			- philo->data->start_time, philo->id);
+		pthread_mutex_lock(&philo->data->finished_mutex);
 		philo->data->finished = 1;
+		pthread_mutex_unlock(&philo->data->finished_mutex);
 		pthread_mutex_unlock(&philo->data->write_mutex);
 		return (1);
 	}

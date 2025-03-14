@@ -81,7 +81,10 @@ void	monitor_philosophers(t_data *data)
 				data->finished = 1;
 				pthread_mutex_unlock(&data->finished_mutex);
 				pthread_mutex_unlock(&data->write_mutex);
-				return ;
+				
+				exit(0);
+				
+				return;
 			}
 			pthread_mutex_lock(&data->finished_mutex);
 			i++;
