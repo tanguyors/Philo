@@ -13,7 +13,8 @@ SRCS = main.c \
 	   philosopher_action2.c \
        philosopher_routine.c \
        simulation_monitor.c \
-	   gettime.c
+	   gettime.c \
+	   philosopher_action3.c
 
 
 # Objets

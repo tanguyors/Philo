@@ -6,7 +6,7 @@
 /*   By: torsini <torsini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 10:05:37 by torsini           #+#    #+#             */
-/*   Updated: 2025/03/13 10:06:54 by torsini          ###   ########.fr       */
+/*   Updated: 2025/03/14 11:09:05 by torsini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,14 +21,6 @@ int	is_simulation_finished(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->finished_mutex);
 	return (finished);
 }
-
-/*static void	announce_philosopher_start(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->data->write_mutex);
-	printf("%d  philo %d has started\n", (int)(get_current_time_ms()
-			- philo->data->start_time), philo->id);
-	pthread_mutex_unlock(&philo->data->write_mutex);
-}*/
 
 static void	perform_philosopher_actions(t_philo *philo)
 {
@@ -75,7 +67,6 @@ int	checkdeath(t_philo *philo)
 	last_meal_time = philo->last_meal;
 	pthread_mutex_unlock(&philo->data->meal_mutex);
 	time_no_eat = actual_time - last_meal_time;
-
 	usleep(100);
 	if (time_no_eat > philo->data->time_to_die)
 	{

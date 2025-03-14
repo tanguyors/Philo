@@ -6,7 +6,7 @@
 /*   By: torsini <torsini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 10:07:04 by torsini           #+#    #+#             */
-/*   Updated: 2025/03/13 10:07:08 by torsini          ###   ########.fr       */
+/*   Updated: 2025/03/14 11:15:12 by torsini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,7 @@ static void	announce_death(t_data *data, int i)
 void	monitor_philosophers(t_data *data)
 {
 	int	i;
-	int	should_continue;
+	int	should_continue ;
 
 	should_continue = 1;
 	while (should_continue)

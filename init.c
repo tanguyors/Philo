@@ -6,11 +6,11 @@
 /*   By: torsini <torsini@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/03/13 10:07:35 by torsini           #+#    #+#             */
-/*   Updated: 2025/03/13 10:07:57 by torsini          ###   ########.fr       */
+/*   Updated: 2025/03/14 11:06:53 by torsini          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo.h" // qui contient la déclaration de t_data, t_philo, etc.
+#include "philo.h"
 
 static int	initialize_simulation_mutexes(t_data *data)
 {
