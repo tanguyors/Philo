@@ -12,22 +12,32 @@
 
 #include "philo.h"
 
-void	handle_philosopher_meal(t_philo *philo)
+// ... existing code ...
+
+void handle_philosopher_meal(t_philo *philo)
 {
-	if (is_simulation_finished(philo))
-	{
-		release_philosopher_forks(philo);
-		return ;
-	}
-	update_meal_status(philo);
-	pthread_mutex_lock(&philo->data->write_mutex);
-	if (!is_simulation_finished(philo))
-		printf("%lld %d is eating\n", get_current_time_ms()
-			- philo->data->start_time, philo->id);
-	pthread_mutex_unlock(&philo->data->write_mutex);
-	usleep(philo->data->time_to_eat * 1000);
-	release_philosopher_forks(philo);
+    pthread_mutex_lock(&philo->data->write_mutex);
+    printf("%lld %d is eating\n", 
+           get_current_time_ms() - philo->data->start_time, philo->id);
+    pthread_mutex_unlock(&philo->data->write_mutex);
+    
+    // Mettre à jour le temps du dernier repas AVANT de commencer à manger
+    pthread_mutex_lock(&philo->data->meal_mutex);
+    philo->last_meal = get_current_time_ms();
+    pthread_mutex_unlock(&philo->data->meal_mutex);
+    
+    // Simuler le temps de repas
+    usleep(philo->data->time_to_eat * 1000);
+    
+    // Incrémenter le nombre de repas
+    pthread_mutex_lock(&philo->data->meal_mutex);
+    philo->meals_eaten++;
+    pthread_mutex_unlock(&philo->data->meal_mutex);
+    
+    // Libérer les fourchettes après avoir mangé
+    release_philosopher_forks(philo);
 }
+// ... existing code ...
 
 void	attempt_to_acquire_forks(t_philo *philo)
 {
@@ -52,12 +62,4 @@ void	announce_fork_acquisition(t_philo *philo)
 		printf("%lld %d has taken a fork\n", get_current_time_ms()
 			- philo->data->start_time, philo->id);
 	pthread_mutex_unlock(&philo->data->write_mutex);
-}
-
-void	acquire_forks_even_philosopher(t_philo *philo)
-{
-	pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
-	announce_fork_acquisition(philo);
-	pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
-	announce_fork_acquisition(philo);
 }

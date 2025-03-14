@@ -16,12 +16,17 @@ int	check_philosopher_death(t_philo *philo)
 {
 	long long	current_time;
 	long long	last_meal_time;
+	long long	time_since_last_meal;
 
 	current_time = get_current_time_ms();
 	pthread_mutex_lock(&philo->data->meal_mutex);
 	last_meal_time = philo->last_meal;
 	pthread_mutex_unlock(&philo->data->meal_mutex);
-	if (current_time - last_meal_time > philo->data->time_to_die)
+	
+	time_since_last_meal = current_time - last_meal_time;
+	
+	// Ajouter une petite marge de tolérance (10ms) pour éviter les morts prématurées
+	if (time_since_last_meal > (philo->data->time_to_die + 10))
 		return (1);
 	return (0);
 }

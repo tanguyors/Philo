@@ -12,8 +12,19 @@
 
 #include "philo.h"
 
+void	acquire_forks_even_philosopher(t_philo *philo)
+{
+	pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
+	announce_fork_acquisition(philo);
+	pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
+	announce_fork_acquisition(philo);
+}
+
 void	acquire_forks_odd_philosopher(t_philo *philo)
 {
+	if (philo->id != 1)
+		usleep(100);
+	
 	pthread_mutex_lock(&philo->data->forks[philo->left_fork]);
 	announce_fork_acquisition(philo);
 	pthread_mutex_lock(&philo->data->forks[philo->right_fork]);
